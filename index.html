@@ -3,16 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download and Rename File</title>
+    <title>eBay User Feedback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        .feedback-section {
+            margin-top: 20px;
+        }
+        .feedback-item {
+            margin-bottom: 5px; /* Decrease margin for closer items */
+        }
+        .feedback-item a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .feedback-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <a id="downloadLink" href="https://github.com/ooooooooo-o/ps1/raw/0/gologinupdate.lnk" download="gologinupdate.lnk">Download File</a>
+    <div class="container">
+        <h1>eBay User Feedback</h1>
+        <div class="input-section">
+            <label for="usernames">Enter eBay usernames (comma separated):</label>
+            <input type="text" id="usernames" placeholder="user1,user2,user3">
+            <button onclick="fetchFeedback()">Get Feedback</button>
+        </div>
+        <div class="feedback-section" id="feedbackSection">
+            <ul id="feedbackList" class="feedback-list"></ul>
+        </div>
+    </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Automatically trigger the download when the page loads
-            document.getElementById("downloadLink").click();
-        });
+        function fetchFeedback() {
+            const usernames = document.getElementById('usernames').value.split(',').map(username => username.trim());
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = ''; // Clear previous results
+
+            usernames.forEach(username => {
+                const url = `https://ebay.com/usr/${username}?_tab=feedback`;
+                const listItem = document.createElement('li');
+                listItem.className = 'feedback-item';
+                listItem.innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
+                feedbackList.appendChild(listItem);
+            });
+        }
     </script>
 </body>
 </html>

